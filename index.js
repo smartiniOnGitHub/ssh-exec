@@ -1,3 +1,7 @@
+'use strict'
+
+/* eslint standard/no-callback-literal: "off" */
+
 var ssh2 = require('ssh2')
 var fs = require('fs')
 var path = require('path')
