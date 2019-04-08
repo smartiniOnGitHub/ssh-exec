@@ -10,6 +10,7 @@ npm install ssh-exec
 
 It is written in plain Javascript and uses [ssh2](https://github.com/mscdex/ssh2) for all the heavy lifting.
 
+
 ## Usage
 
 ``` js
@@ -43,6 +44,19 @@ exec('ls -lh', 'ubuntu@my-remote.com', function (err, stdout, stderr) {
 })
 ```
 
+
+## Requirements
+
+Node.js 8.15.x or later.
+
+
+## Note
+
+Nothing.
+
+
 ## License
 
 MIT
+
+----
