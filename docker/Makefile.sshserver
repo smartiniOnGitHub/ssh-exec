@@ -1,0 +1,53 @@
+.PHONY: build start copy copy-key stop clean-image clean-all inspect ssh-connect ssh-connect-and-list-files
+
+REPO_NAME ?= ssh-exec_test
+BRANCH_NAME ?= $(shell git branch 2>/dev/null | grep '^*' | colrm 1 2)
+REPO_REV_HASH ?= $(shell git rev-parse --short HEAD)
+DOCKER_IMAGE ?= ${REPO_NAME}
+DOCKER_TAG ?= $(shell echo ${REPO_NAME}_${REPO_REV_HASH} | tr A-Z a-z)
+# WORK_DIR ?= /home/test
+WORK_DIR ?= /root
+
+build:
+	@echo 'Build image for repo ${REPO_NAME}, branch ${BRANCH_NAME}'
+	docker build -t ${DOCKER_TAG} -f docker/Dockerfile.sshserver .
+
+start:
+	# docker run --name $(DOCKER_TAG) -td --rm $(DOCKER_TAG) cat
+	docker run -d --name=$(DOCKER_TAG) --rm -p 2222:22 $(DOCKER_TAG)
+
+copy:
+	# copy sources into the running container
+	docker cp . $(DOCKER_TAG):$(WORK_DIR)/
+
+copy-key:
+	# copy my public key into the running container
+	# trick: set directly as the only authorized key
+	# docker cp ~/.ssh/id_rsa.pub $(DOCKER_TAG):/root/.ssh/authorized_keys
+	docker cp ~/.ssh/id_rsa.pub $(DOCKER_TAG):$(WORK_DIR)/
+	docker exec -it $(DOCKER_TAG) bash -c "cd ..; cat id_rsa.pub >> .ssh/authorized_keys"
+
+build-and-setup: build start copy-key
+
+stop:
+	docker rm -f $(DOCKER_TAG)
+
+clean-image:
+	docker rmi -f $(DOCKER_TAG)
+
+clean-all: stop clean-image
+	# stop and clean the image
+
+
+# local-only tasks
+# NOT for CI because for example they require interactive mode, attention ...
+inspect:
+	# inspect container contents via an interactive shell into the running container
+	docker exec -it $(DOCKER_TAG) bash
+
+ssh-connect:
+	# diagnose ssh connection roblems with ssh argument -vvv
+	ssh -o PasswordAuthentication=No -o StrictHostKeyChecking=no -o "UserKnownHostsFile /dev/null" root@localhost -p 2222
+
+ssh-connect-and-list-files:
+	ssh -o PasswordAuthentication=No -o StrictHostKeyChecking=no -o "UserKnownHostsFile /dev/null" root@localhost -p 2222 -t 'pwd; ls -la'
