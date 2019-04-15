@@ -23,6 +23,8 @@ src/
 test/
 # example/
 
+docker/
+
 *.zip
 *.tar
 *.tar.gz
