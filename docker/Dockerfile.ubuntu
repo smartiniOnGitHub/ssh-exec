@@ -27,6 +27,10 @@ RUN mkdir -p /root/.ssh \
     && chmod 700 ~/.ssh && chmod 600 ~/.ssh/authorized_keys
 WORKDIR /root/app
 
+# copy all sources in the container (exclusions in .dockerignore file)
+# COPY --chown=test:test . .
+
 EXPOSE 22
 
 CMD ["/usr/sbin/sshd", "-D"]
+# CMD ["sleep", "3600"]

@@ -26,7 +26,7 @@ For interactive testing:
 ```
 make -f docker/Makefile.sshserver inspect
 ```
-for ssh connection (interactiv, then leave it with 'exit'):
+for ssh connection (interactive, then leave it with 'exit'):
 ```
 make -f docker/Makefile.sshserver ssh-connect-and-list-files
 ```
