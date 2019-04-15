@@ -5,7 +5,6 @@ BRANCH_NAME ?= $(shell git branch 2>/dev/null | grep '^*' | colrm 1 2)
 REPO_REV_HASH ?= $(shell git rev-parse --short HEAD)
 DOCKER_IMAGE ?= ${REPO_NAME}
 DOCKER_TAG ?= $(shell echo ${REPO_NAME}_${REPO_REV_HASH} | tr A-Z a-z)
-# WORK_DIR ?= /home/test
 WORK_DIR ?= /root
 
 all: build start copy-key ssh-connect-and-list-files clean-all
@@ -15,7 +14,7 @@ build:
 	docker build -t ${DOCKER_TAG} -f docker/Dockerfile.sshserver .
 
 start:
-	# docker run --name $(DOCKER_TAG) -td --rm $(DOCKER_TAG) cat
+	@echo 'Start container with name $(DOCKER_TAG)'
 	docker run -d --name=$(DOCKER_TAG) --rm -p 2222:22 $(DOCKER_TAG)
 
 copy:
@@ -24,8 +23,7 @@ copy:
 
 copy-key:
 	# copy my public key into the running container
-	# trick: set directly as the only authorized key
-	# docker cp ~/.ssh/id_rsa.pub $(DOCKER_TAG):/root/.ssh/authorized_keys
+	# and add it to authorized keys
 	docker cp ~/.ssh/id_rsa.pub $(DOCKER_TAG):$(WORK_DIR)/
 	docker exec -it $(DOCKER_TAG) bash -c "cd ..; cat id_rsa.pub >> .ssh/authorized_keys"
 
