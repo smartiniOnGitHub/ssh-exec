@@ -2,15 +2,15 @@
 
 /* eslint standard/no-callback-literal: "off" */
 
-var ssh2 = require('ssh2')
-var fs = require('fs')
-var path = require('path')
-var duplexify = require('duplexify')
-var once = require('once')
+const ssh2 = require('ssh2')
+const fs = require('fs')
+const path = require('path')
+const duplexify = require('duplexify')
+const once = require('once')
 
-var HOME = process.env.HOME || process.env.USERPROFILE
+const HOME = process.env.HOME || process.env.USERPROFILE
 
-var parse = function (opts) {
+const parse = function (opts) {
   if (typeof opts === 'string') {
     opts = opts.match(/^(?:([^@]+)@)?([^:]+)(?::(\d+))?$/) || []
     opts = {
@@ -23,22 +23,22 @@ var parse = function (opts) {
   return opts
 }
 
-var exec = function (cmd, opts, cb) {
+const exec = function (cmd, opts, cb) {
   opts = parse(opts)
 
-  var stream = duplexify()
-  var client = new ssh2.Client()
-  var key = opts.key === false ? undefined : opts.key || path.join(HOME, '.ssh', 'id_rsa')
-  var fingerprint
+  const stream = duplexify()
+  const client = new ssh2.Client()
+  let key = opts.key === false ? undefined : opts.key || path.join(HOME, '.ssh', 'id_rsa')
+  let fingerprint
 
   client.on('error', function (err) {
     stream.destroy(err)
   })
 
-  var connect = function () {
+  const connect = function () {
     if (key && key.toString().toLowerCase().indexOf('encrypted') > -1) key = null
 
-    var verifier = function (hash) {
+    const verifier = function (hash) {
       fingerprint = hash
 
       if (!opts.fingerprint) return true
@@ -67,7 +67,7 @@ var exec = function (cmd, opts, cb) {
     })
   }
 
-  var run = function () {
+  const run = function () {
     client.exec(cmd, function (err, stdio) {
       if (err) return stream.destroy(err)
 
@@ -83,7 +83,7 @@ var exec = function (cmd, opts, cb) {
 
       stdio.on('exit', function (code) {
         if (code !== 0) {
-          var err = new Error('Non-zero exit code: ' + code)
+          const err = new Error('Non-zero exit code: ' + code)
           err.code = code
           stream.emit('error', err)
         }
@@ -93,7 +93,7 @@ var exec = function (cmd, opts, cb) {
     })
   }
 
-  var onverify = function (err) {
+  const onverify = function (err) {
     if (err) return stream.destroy(err)
     run()
   }
@@ -120,11 +120,11 @@ var exec = function (cmd, opts, cb) {
   return stream
 }
 
-var oncallback = function (stream, cb) {
+const oncallback = function (stream, cb) {
   cb = once(cb)
 
-  var stderr = ''
-  var stdout = ''
+  let stderr = ''
+  let stdout = ''
 
   stream.setEncoding('utf-8')
 
