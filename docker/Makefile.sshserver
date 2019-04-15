@@ -1,4 +1,4 @@
-.PHONY: build start copy copy-key stop clean-image clean-all inspect ssh-connect ssh-connect-and-list-files
+.PHONY: all inspect ssh-connect
 
 REPO_NAME ?= ssh-exec_test
 BRANCH_NAME ?= $(shell git branch 2>/dev/null | grep '^*' | colrm 1 2)
@@ -7,6 +7,8 @@ DOCKER_IMAGE ?= ${REPO_NAME}
 DOCKER_TAG ?= $(shell echo ${REPO_NAME}_${REPO_REV_HASH} | tr A-Z a-z)
 # WORK_DIR ?= /home/test
 WORK_DIR ?= /root
+
+all: build start copy-key ssh-connect-and-list-files clean-all
 
 build:
 	@echo 'Build image for repo ${REPO_NAME}, branch ${BRANCH_NAME}'
@@ -29,6 +31,7 @@ copy-key:
 
 build-and-setup: build start copy-key
 
+
 stop:
 	docker rm -f $(DOCKER_TAG)
 
@@ -41,9 +44,16 @@ clean-all: stop clean-image
 
 # local-only tasks
 # NOT for CI because for example they require interactive mode, attention ...
+
 inspect:
 	# inspect container contents via an interactive shell into the running container
 	docker exec -it $(DOCKER_TAG) bash
+
+show-logs:
+	docker logs --follow --tail=1000 $(DOCKER_TAG)
+
+show-process:
+	docker ps --filter name=$(DOCKER_TAG)
 
 ssh-connect:
 	# diagnose ssh connection roblems with ssh argument -vvv

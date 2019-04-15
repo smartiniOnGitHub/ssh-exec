@@ -45,7 +45,7 @@ make -f docker/Makefile.sshserver clean-all
 
 ## Requirements
 
-Latest Make (cmake) and latest Docker, running on a Linux or a Mac.
+Latest: Git, Make (cmake), Docker; all running on a Linux or a Mac.
 
 
 ## Note
