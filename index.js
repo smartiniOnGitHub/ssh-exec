@@ -10,7 +10,7 @@ const once = require('once')
 
 const HOME = process.env.HOME || process.env.USERPROFILE
 
-const parse = function (opts) {
+function parse (opts) {
   if (typeof opts === 'string') {
     opts = opts.match(/^(?:([^@]+)@)?([^:]+)(?::(\d+))?$/) || []
     opts = {
@@ -23,7 +23,7 @@ const parse = function (opts) {
   return opts
 }
 
-const exec = function (cmd, opts, cb) {
+function exec (cmd, opts, cb) {
   opts = parse(opts)
 
   const stream = duplexify()
@@ -35,10 +35,10 @@ const exec = function (cmd, opts, cb) {
     stream.destroy(err)
   })
 
-  const connect = function () {
+  function connect () {
     if (key && key.toString().toLowerCase().indexOf('encrypted') > -1) key = null
 
-    const verifier = function (hash) {
+    function verifier (hash) {
       fingerprint = hash
 
       if (!opts.fingerprint) return true
@@ -67,7 +67,7 @@ const exec = function (cmd, opts, cb) {
     })
   }
 
-  const run = function () {
+  function run () {
     client.exec(cmd, function (err, stdio) {
       if (err) return stream.destroy(err)
 
@@ -93,7 +93,7 @@ const exec = function (cmd, opts, cb) {
     })
   }
 
-  const onverify = function (err) {
+  function onverify (err) {
     if (err) return stream.destroy(err)
     run()
   }
@@ -120,7 +120,7 @@ const exec = function (cmd, opts, cb) {
   return stream
 }
 
-const oncallback = function (stream, cb) {
+function oncallback (stream, cb) {
   cb = once(cb)
 
   let stderr = ''
