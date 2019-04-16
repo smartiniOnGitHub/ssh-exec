@@ -20,10 +20,10 @@ test('ensure objects exported by the library, exists and are of the right type',
 
 /** @test {sshExec} */
 test('execute a command via ssh to root@localhost with default options, and ensure all is good', (t) => {
-  if (process.env.SSH_LOCALHOST_DEFAULT_DISABLE) {
+  if (process.env.SSH_LOCALHOST_DEFAULT_ENABLE_TEST !== 'true') {
     t.plan(1)
     t.comment('skipped test to root@localhost with default options')
-    t.pass('test skipped, because env var SSH_LOCALHOST_DEFAULT_DISABLE is defined')
+    t.pass('test skipped, because env var SSH_LOCALHOST_DEFAULT_ENABLE_TEST is not defined')
   } else {
     t.plan(1)
     t.comment('run test to root@localhost with default options')
@@ -36,10 +36,10 @@ test('execute a command via ssh to root@localhost with default options, and ensu
 // TODO: connect via ssh to a running container, with username and password ... add a note in the container, to re-enable it ... wip
 /** @test {sshExec} */
 test('execute a command via ssh on localhost with username and password, and ensure all is good', (t) => {
-  if (process.env.SSH_LOCALHOST_USERPASS_DISABLE) {
+  if (process.env.SSH_LOCALHOST_USERPASS_ENABLE_TEST !== 'true') {
     t.plan(1)
     t.comment('skipped test on localhost with username and password')
-    t.pass('test skipped, because env var SSH_LOCALHOST_USERPASS_DISABLE is defined')
+    t.pass('test skipped, because env var SSH_LOCALHOST_USERPASS_ENABLE_TEST is not defined')
   } else {
     t.plan(1)
     t.comment('run test on localhost with username and password')
@@ -58,10 +58,10 @@ test('execute a command via ssh on localhost with username and password, and ens
 // TODO: connect via ssh to a running container, with root and key ... enable and then test it ... wip
 /** @test {sshExec} */
 test('execute a command via ssh on localhost with username and key, and ensure all is good', (t) => {
-  if (process.env.SSH_LOCALHOST_USERKEY_DISABLE) {
+  if (process.env.SSH_LOCALHOST_USERKEY_ENABLE_TEST !== 'true') {
     t.plan(1)
     t.comment('skipped test on localhost with username and key')
-    t.pass('test skipped, because env var SSH_LOCALHOST_USERKEY_DISABLE is defined')
+    t.pass('test skipped, because env var SSH_LOCALHOST_USERKEY_ENABLE_TEST is not defined')
   } else {
     t.plan(1)
     t.comment('run test on localhost with username and key')
